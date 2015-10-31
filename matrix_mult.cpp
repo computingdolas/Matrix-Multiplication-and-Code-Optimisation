@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     
     //Declaring the variables 
 
-    int i;
+    
     double value;
     double value2;
     
@@ -69,26 +69,41 @@ int main(int argc, char *argv[])
     int vsize1;
     vsize = v.size();
     vsize1= v1.size();
-
+    
     // Printing the values stored in array
     
-    for (i =0; i < vsize ;++i)
+    /*
+    for (int i =0; i < vsize ;++i)
         cout<<"The value of vectors are "<<v[i]<<endl;
     
     for (int j=0;j< vsize1;++j)
         cout<<"The values of second files are "<<v1[j]<<endl;
 
-    int row1= v[1];
-    int col1 = v[2];
-    int row2= v1[1];
-    int col2= v1[2];
+    */
+
+    // Fetching the number of rows and columns 
+
+    int row1= v[0];
+    int col1 = v[1];
+    int row2= v1[0];
+    int col2= v1[1];
+
+    cout<<row1<<"   "<<row2<<endl;
+    //cout<<vsize<<"  "<<vsize1<<endl;
+    cout<<col1<<"   "<<col2<<endl;
+
+
+    // Naive matrix Matrix multiplication 
+
     
 
 
-    
+
+
+    // Storing the result of computation in another matrix 
+
 
     return 0;
-
 
 }
 
