@@ -1,136 +1,336 @@
-/*
-#include <iostream>
+#include<assert.h>
+#include<iostream>
+#include<fstream>
+// This is the test edit on git hub
 
-using namespace std;
-
-template <class T>
-class  sagar{
-	T first, second 
-	public :
-		sagar(T a, T b){
-		first = a;
-		second = b;
-		}
-		
-		T bigger();
-		
-		
-};
-
-template <class T>
-T sagar<T>::bigger()
-*/
 using std::cout;
 using std::cin;
 using std::endl;
+using std::ostream;
+
+template <class T>
 class Matrix 
 {
+
 	private :
-	int row;
-	int col;
-	int row1;
-	int col1;
-	double *ptr;
-	
-	
-	public:
-	
-	Matrix(int nrow , int ncol ,double ini);//Constructor 
-	~Matrix();//Destructor
-	Matrix(const Matrix &obj);// Copy constructor 
-	Matrix& operator = (const Matrix& obj);//Assignment Operator 
- 	void display();// Dislplay Function 
- 	//Matrix& operator+=(const Matrix& obj);
- 	//Matrix& Operator-=(const Matrix& obj);
- 	friend Matrix operator+(const Matrix& obj,const Matrix& obj1);
- 	//Matrix operator-(const Matrix& obj,const Matrix& obj1) 
+	int m;
+	int n;
+	T *ptr;
 
-};
-
-Matrix::Matrix(int nrow, int ncol ,double ini)
-{
-	cout<<" constructor created "<<endl;
+	public :
 	
-	row= nrow ;
-	col= ncol ;
-	ptr = new double [row*col];
-	for (int i =0;i < row*col ;++i)
-		*(ptr+ i)= ini ;
-}
-
-Matrix::~Matrix()
-{
-
-	cout<<" Destructor called"<<endl;
-	delete [] ptr;
-			
-}
-Matrix& Matrix :: operator = (const Matrix& obj)
-{
-	cout<<"The Assignment copy constructor is created"<<endl;
-	if (this != &obj)
+	int getNumRows()
 	{
-		row= obj.row;
-		col = obj.col;
-		//ptr = new double [row * col]
-		for (int i =0;i < row * col; ++i)
-			*(ptr+i)= *(obj.ptr + i);
-		
+	return m;
 	}
 
-	return *this ;
-}
-Matrix::Matrix(const Matrix &obj)
+	int getNumCols()
+	{
+	return n;
+	}
 
+	Matrix(int nrow, int ncol, T val);  // Constructor
+	Matrix(int nrow, int ncol);
+	~Matrix();				// Destructor
+	Matrix(const Matrix &obj);		// Copy Constructor
+	Matrix & operator= (const Matrix &obj);  //Copy Assignment Operator
+
+	Matrix operator+ (const Matrix &obj);
+	Matrix  operator- (const Matrix &obj);
+	Matrix operator* (const Matrix &obj);
+
+	T operator() (int r, int c) const;
+	T& operator() (int r, int c);
+
+	Matrix & operator+= (const Matrix &obj);
+	Matrix & operator-= (const Matrix &obj);
+	Matrix operator*= (const Matrix &obj);
+
+	bool operator== (const Matrix &obj);
+	bool operator!= (const Matrix &obj);
+	
+	//template <class T>;
+	//template<class U>
+ 	//friend ostream& operator<< (ostream& os, const Matrix<U>& obj); 
+	/*A<U> foo(A<U>& a);
+	template <typename Type> // this is the template parameter declaration
+	friend ostream& operator<< (ostream& os, const Type &obj);*/
+
+	void displayMatrix() const;
+
+
+} ;
+
+
+
+template <class T>
+Matrix<T> :: Matrix (int nrow, int ncol)  // Constructor
+	{
+
+	//cout<<"\nConstructor called for "<< nrow <<" rows and "<< ncol << " columns" << endl; 
+
+	m = nrow;
+	n = ncol;
+	ptr = new T[m*n];
+
+	for(int i=0 ; i < m*n ; ++i)
+	    {	
+	      *(ptr+i)=0;
+	    }
+
+	}
+
+
+template <class T>
+Matrix<T> :: Matrix (int nrow, int ncol, T val)  // Constructor
+	{
+
+	//cout<<"\nConstructor called for "<< nrow <<" rows and "<< ncol << " columns" << endl; 
+
+	m = nrow;
+	n = ncol;
+	ptr = new T[m*n];
+
+	for(int i=0 ; i < m*n ; ++i)
+	    {	
+	      *(ptr+i)=val;
+	    }
+
+	}
+
+template <class T>	
+Matrix<T>::Matrix(const Matrix &obj)       // Copy Constructor
+	 {
+	   
+	 // cout<<"\nCopy constructor called"<<endl;
+	  
+	  this->m=obj.m;
+	  this->n=obj.n;
+	  
+	  ptr = new T[m*n];
+	  
+	  for(int i=0 ; i < m*n ; ++i)
+	    {	
+	      *(ptr+i)=*(obj.ptr+i);
+	    }
+	 }
+
+template <class T>	 
+Matrix<T> & Matrix<T>::operator=(const Matrix &obj)
+	 {
+	  //cout<<"\nCopy assignment operator called"<<endl;
+	  
+	  if(this != &obj)
+	  {
+	   
+	      m=obj.m;
+	      n=obj.n;
+	  
+	      for(int i=0 ; i < m*n ; ++i)
+	      {	
+	      *(ptr+i)=*(obj.ptr+i);
+	      }
+	  
+	  }
+	  
+	  return *this;
+	  
+	 }
+
+template <class T>
+Matrix<T>  Matrix<T>::operator+ (const Matrix &obj)
 {
-	cout<<" The copy constructor is created "<<endl;
-	row= obj.row ;
-	col = obj.col ;
-	ptr = new double [row*col];
-	//cout<< nrow<<"    "<<ncol;
-	for (int j =0;j<row*col ;++j)
-		*(ptr+j)= *(obj.ptr +j);
+	assert(obj.m == this->m);
+	assert(obj.n == this->n);
+
+	//for(int i=0; i<m*n ; ++i)
+		//*(this->ptr+i) = (*(this->ptr + i)) + (*(obj.ptr +i));
 	
-	
-	//cout << " The elements of "<<j<< " is "<<*(this.ptr +j)<<endl;
-		
+	Matrix temp(*this);
+	temp += obj;
+
+	return temp;
 }
 
-Matrix operator+ (const Matrix& obj,const Matrix& obj1)
+template <class T>
+Matrix<T> & Matrix<T>::operator+= (const Matrix &obj)
 {
-	cout<<" the addition operator is called "<<endl;
-		
-	this.row = obj.row;
-	this.row1 =obj1.row;
-	this.col  =obj.col;
-	this.col1 = obj1.col;
-	if (obj.row == obj.row1 && obj.col == obj.col1)
-		cout<<" The addition is not possible ";
+	assert(obj.m == this->m);
+	assert(obj.n == this->n);
+
+	for(int i=0; i<m*n ; ++i)
+		*(this->ptr+i) = (*(this->ptr + i)) + (*(obj.ptr +i));
+
+	return *this;
+}
+
+template <class T>
+Matrix<T>  Matrix<T>::operator- (const Matrix &obj)
+{
+	assert(obj.m == this->m);
+	assert(obj.n == this->n);
+
+	Matrix temp(*this);
+	temp -= obj;
+
+	return temp;
+}	
+
+template <class T>
+Matrix<T> & Matrix<T>::operator-= (const Matrix &obj)
+{
+	assert(obj.m == this->m);
+	assert(obj.n == this->n);
+
+	for(int i=0; i<m*n ; ++i)
+		*(this->ptr+i) = (*(this->ptr + i)) - (*(obj.ptr +i));
+
+	return *this;
+}
+
+
+template <class T>
+Matrix<T> Matrix<T>::operator* (const Matrix &obj)
+{
+	assert(this->n == obj.m);
+
+	Matrix m3(this->m, obj.n,0.0); 
+
+	T temp = 0.0;
+	int row = 0;
+	int col = 0;
+
+	for(int i=0; i< (this->m)*(obj.n) ; ++i)
+		{
+			//cout<<"i is: "<<i <<endl;
+			temp = 0.0;
+			row = i/(obj.n);
+			col = i % (obj.n); 
+
+			//cout<<"\nrow is: "<<row<<endl;
+			//cout<<"\ncol is:"<<col<<endl; 
+
+			for(int j=0 ; j < this->n ; ++j)
+			{
+				//cout<<"j is: " << j << endl;
+
+				//cout<<"\ntemp:   "<<temp<<endl;
+
+				//cout<< "\n(*(this->ptr + (row*(this->n) + j) ))" << (*(this->ptr + (row*(this->n) + j) )) <<endl;
+
+				//cout<<"\n(*(obj.ptr + (col + j*(obj.n)) ))" << (*(obj.ptr + (col + j*(obj.n)) )) << endl;
+
+				temp = temp +  (*(this->ptr + (row*(this->n) + j) )) * (*(obj.ptr + (col + j*(obj.n)) ));
+
+			}
+			//cout<<"Now the temp is : " << temp << endl;
+			//*(this->ptr + i) = temp;
+			*(m3.ptr + i) = temp;
+		}
+
+
+	return m3;
+}	
+
+template <class T>
+Matrix<T> Matrix<T>::operator*= (const Matrix &obj)  
+{
+	//Matrix retMat(this->m, obj.n, 0.0); 
+	Matrix m1(*this); 
+	Matrix m2(obj);
+	m1 = m1*m2;
+
+	return m1;
+}
+
+template <class T>
+bool Matrix<T> :: operator== (const Matrix &obj)
+{
+	bool flag = true;
+
+	if(((this->m) != (obj.m)) || ((this->n) != (obj.n)) )
+	{
+		flag = false;
+		//cout<<"I am in flag"<<endl;
+	}
 	else 
 	{
-		for(int i= 0;i< this.row * this.col ;++i )	
+		for(int i=0;i <(this->m)* (this->n);++i)
 		{
-			*(this.ptr + i)= *(obj.ptr +i) + *(obj1.ptr + i);
+			if(*(this->ptr + i ) != *(obj.ptr + i))
+				{
+					flag = false;
+					//cout<<"I am in for loop for i: " << i << endl;
+					break;
+				}
 		}
 	}
 
-	return temp ;
+	return flag;
 	
-
-
 }
-void Matrix::display()
+
+template <class T>
+bool Matrix<T> :: operator!= (const Matrix &obj)
 {
-	cout<<" the display is called cheacking the program"<<endl;
-	/*
-	int i= 0 ;
-	
-	for (i=0;i<row;++i
-	{	
-		for(int j=0;j<col;++j)
-		
-		//cout<<"The elements of"<<i<<"the matrix are "<<*(ptr + i)<<endl;
-		
-	}
-	*/
+	return !(*this == obj);
 }
+
+template <class T>
+Matrix<T>::~Matrix()
+	{
+	//cout<<"\nDestructor called " << endl; 
+	
+	delete[] ptr; 
+
+	}
+
+template <class T>
+T Matrix<T> :: operator() (int r, int c) const
+{
+	//cout<<"I am inside const operator ()" <<  endl; 	
+	return *(ptr+ r*n + c);
+} 
+
+template <class T>
+T& Matrix<T> :: operator() (int r, int c)
+{	
+	//cout<<"I am inside operator ()" <<  endl; 	
+	return *(ptr+ r*n + c);
+}	
+
+
+
+template<class T>
+ ostream& operator<< (ostream& os,const Matrix<T>& obj)
+ {
+   
+   obj.displayMatrix();
+   return os;
+ }
+
+
+	
+template <class T>	
+void Matrix<T>::displayMatrix() const
+      {
+	int i=0,j=0;
+	//cout<<"\nThe contents of the matrix are: "<< endl;
+	
+	for(i=0 ; i< this->m ; ++i)
+	    {	
+	    	//cout<<"i is: "<<i<<endl;
+	      for(j=0 ; j< this->n; ++j)
+	      {
+	      	//cout<<"j is: " <<j<<endl;
+	      cout<< *(ptr+ (i*(this->n) +j))<<"\t";
+	      }
+	      cout<<endl;
+	    }
+	
+	
+      }
+
+
+
+
