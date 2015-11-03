@@ -3,7 +3,9 @@
 #include <fstream>
 #include <string>
 #include <vector>
-// Using namespace std
+#include <assert.h>
+#include "ex01_example/timer.h"
+
 using namespace std;
 
 
@@ -11,64 +13,53 @@ using namespace std;
 int main(int argc, char *argv[])
 
 {
-
-    
-    int n=0;
+   //int n=0;
     
     //Declaring the vector 
 
-    std::vector<double> v;
-    std::vector<double> v1;
+    vector<double> v_A;
+    vector<double> v_B;
+    vector<double> v_C;
     
     //Declaring the variables 
-
-    
-    double value;
-    double value2;
+    double value_A;
+    double value_B;
     
     // Declaring object of Fstream header file 
-    
-    ifstream file;
-    ifstream file2;
+    ifstream file_A;
+    ifstream file_B;
 
     // Opening The files 
-    
-    file.open(argv[1]);
-    file2.open(argv[2]);
+    file_A.open(argv[1]);
+    file_B.open(argv[2]);
 
 
     // Reading till untill end of file has reached 
-    
-    while(file>>value)
+    while(file_A>>value_A)
     {   
-        
-        
         //file>> arr[n]; // putting it in array 
-        v.push_back(value);
-        ++n;
+        v_A.push_back(value_A);
+        //++n;
 
     }
     // Reading the second file 
-    
-    while (file2>> value2)
+    while (file_B>> value_B)
     {
         //Reading the contents of the second file 
 
-        v1.push_back(value2);
+        v_B.push_back(value_B);
     }
 
     // Closing the files 
-    
-    file.close();
-    file2.close();
+    file_A.close();
+    file_B.close();
     
    
-    // Getting the size of vector 
-    
-    int vsize;
-    int vsize1;
-    vsize = v.size();
-    vsize1= v1.size();
+    // Getting the size of vector s
+    int size_A;
+    int size_B;
+    size_A = v_A.size();
+    size_B = v_B.size();
     
     // Printing the values stored in array
     
@@ -83,22 +74,76 @@ int main(int argc, char *argv[])
 
     // Fetching the number of rows and columns 
 
-    int row1= v[0];
-    int col1 = v[1];
-    int row2= v1[0];
-    int col2= v1[1];
+    int numRow_A= v_A[0];
+    int numCol_A = v_A[1];
+    int numRow_B = v_B[0];
+    int numCol_B = v_B[1];
+    int numRow_C = numRow_A;
+    int numCol_C = numCol_B ;  
+    int size_C = numRow_C*numCol_C;
 
-    cout<<row1<<"   "<<row2<<endl;
+    v_C.push_back(numRow_C);
+    v_C.push_back(numCol_C);
+
+    assert(numCol_A == numRow_B);
+
+    /*for(int i=0;i< size_A;++i)
+    {
+        cout<<"v_A["<< i <<"]: " << v_A[i] << ",  v_B["<< i <<"]: " << v_B[i] << endl;
+    }*/
+
+    //cout<<row<<"   "<<row2<<endl;
     //cout<<vsize<<"  "<<vsize1<<endl;
-    cout<<col1<<"   "<<col2<<endl;
+    //cout<<col<<"   "<<col2<<endl;
 
-
-    // Naive matrix Matrix multiplication 
-
+    //defining the timer
+    siwir:: Timer timer;
     
+    // Naive Matrix Matrix multiplication  O(n3)
 
+    double timeTaken = 0.0;
+    double temp = 0.0;
+    int row = 0;
+    int col = 0;
+    
+    for(int i=0; i< size_C ; ++i)
+        {
+            //cout<<"i is: "<<i <<endl;
+            temp = 0.0;
+            row = i/numCol_B;
+            col = i % numCol_B; 
 
+            //cout<<"\nrow is: "<<row<<endl;
+            //cout<<"\ncol is:"<<col<<endl; 
 
+            for(int j=0 ; j < numCol_A ; ++j)
+            {
+                //cout<<"j is: " << j << endl;
+
+               // cout<<"\ntemp:   "<<temp<<endl;
+
+                temp +=  v_A[2+ row*numCol_A + j] * v_B[2 + col+ j*numCol_B];
+            }
+            //cout<<"Now the temp is : " << temp << endl;
+          
+            v_C.push_back(temp);
+            //cout<<"the temp is : " <<  temp<< endl;
+        }
+
+        timeTaken = timer.elapsed();
+
+        cout<<"\nTime taken in matrix multiplication :" <<  timeTaken << " seconds \nDisplay of matrix C\n";
+    
+        for(int i=0 ; i < numRow_C; ++i)
+          {   
+            //cout<<"i is: "<<i<<endl;
+          for(int j=0 ; j < numCol_C; ++j)
+          {
+            //cout<<"j is: " <<j<<endl;
+          cout<< v_C[2+i*numCol_C + j]<<"\t";
+          }
+          cout<<endl;
+        } 
 
     // Storing the result of computation in another matrix 
 
