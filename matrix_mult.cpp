@@ -4,30 +4,45 @@
 #include <string>
 #include <vector>
 #include <assert.h>
-#include "ex01_example/timer.h"
+#include "Timer.h"
+
+
+
 
 using namespace std;
 
+extern "C" {
+#include <cblas.h>
+}
 
-// Main function passing argument
+#ifdef USE_LIKWID
+extern "C"{ 
+#include <likwid.h>
+}
+#endif
+ 
+
+
+
+//using namespace std;
+
+
+// Main function passing argumentg
 int main(int argc, char *argv[])
 
 {
-   //int n=0;
-    
-    //Declaring the vector 
-
-    vector<double> v_A;
-    vector<double> v_B;
-    vector<double> v_C;
+   
+    std::vector<double> v_A;
+    std::vector<double> v_B;
+    std::vector<double> v_C;
     
     //Declaring the variables 
     double value_A;
     double value_B;
     
     // Declaring object of Fstream header file 
-    ifstream file_A;
-    ifstream file_B;
+    std::ifstream file_A;
+    std::ifstream file_B;
 
     // Opening The files 
     file_A.open(argv[1]);
@@ -95,11 +110,17 @@ int main(int argc, char *argv[])
     //cout<<row<<"   "<<row2<<endl;
     //cout<<vsize<<"  "<<vsize1<<endl;
     //cout<<col<<"   "<<col2<<endl;
+#ifdef USE_LIKWID
+	likwid_markerInit();
+	likwid_markerStartRegion("vector");
+#endif
 
     //defining the timer
     siwir:: Timer timer;
     
     // Naive Matrix Matrix multiplication  O(n3)
+
+
 
     double timeTaken = 0.0;
     double temp = 0.0;
@@ -131,6 +152,11 @@ int main(int argc, char *argv[])
         }
 
         timeTaken = timer.elapsed();
+        
+#ifdef USE_LIKWID
+	likwid_markerInit();
+	likwid_markerStartRegion("vector");
+#endif
 
         cout<<"\nTime taken in matrix multiplication :" <<  timeTaken << " seconds \nDisplay of matrix C\n";
     

@@ -16,7 +16,7 @@ INCLUDES += -I/usr/local/likwid-3.1.2/include/
 LDFLAGS += -L/usr/local/likwid-3.1.2/lib/
 LIBS += -llikwid
 
-TARGET = ex01_example
+TARGET = matrix_mult
 OBJS = $(TARGET).o
 
 all: $(TARGET)
