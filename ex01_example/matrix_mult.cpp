@@ -24,7 +24,10 @@ int main(int argc, char *argv[])
    //int n=0;
     
     //Declaring the vector 
-    //assert(argc==4);	
+    cout<<" The prpogram ";
+    
+    
+    	
     if(argc != 4)
     cout<<"There is some error";
     vector<double> v_A;
@@ -38,10 +41,13 @@ int main(int argc, char *argv[])
     // Declaring object of Fstream header file 
     ifstream file_A;
     ifstream file_B;
+    ofstream file_C;
+    
 
     // Opening The files 
     file_A.open(argv[1]);
     file_B.open(argv[2]);
+    file_C.open(argv[3]);
 
 
     // Reading till untill end of file has reached 
@@ -105,10 +111,7 @@ int main(int argc, char *argv[])
     //cout<<row<<"   "<<row2<<endl;
     //cout<<vsize<<"  "<<vsize1<<endl;
     //cout<<col<<"   "<<col2<<endl;
-#ifdef USE_LIKWID
-	likwid_markerInit();
-	likwid_markerStartRegion("vector");
-#endif
+
 
     //defining the timer
     siwir:: Timer timer;
@@ -121,6 +124,10 @@ int main(int argc, char *argv[])
     double temp = 0.0;
     int row = 0;
     int col = 0;
+#ifdef USE_LIKWID
+	likwid_markerInit();
+	likwid_markerStartRegion("vector");
+#endif
     
     for(int i=0; i< size_C ; ++i)
         {
@@ -140,20 +147,28 @@ int main(int argc, char *argv[])
 
                 temp +=  v_A[2+ row*numCol_A + j] * v_B[2 + col+ j*numCol_B];
             }
+
             //cout<<"Now the temp is : " << temp << endl;
           
             v_C.push_back(temp);
+            
             //cout<<"the temp is : " <<  temp<< endl;
         }
 
         timeTaken = timer.elapsed();
-        
 #ifdef USE_LIKWID
-	likwid_markerInit();
-	likwid_markerStartRegion("vector");
+	
+	likwid_markerStopRegion("vector");
+	likwid_markerClose();
 #endif
+        
+
 
         cout<<"\nTime taken in matrix multiplication :" <<  timeTaken << " seconds \nDisplay of matrix C\n";
+        for (int i=0;i<(size_C + 2);i++)
+        	file_C<< v_C[i];
+        	
+        file_C.close();
     
       /*  for(int i=0 ; i < numRow_C; ++i)
           {   
